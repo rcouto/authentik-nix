@@ -6,9 +6,23 @@
 , python312
 }:
 
+let
+  python = python312.override {
+    self = python;
+    packageOverrides = final: prev: {
+      wheel = prev.wheel.overridePythonAttrs (oA: rec {
+        version = "0.45.0";
+        src = oA.src.override (oA: {
+          rev = "refs/tags/${version}";
+          hash = "sha256-SkviTE0tRB++JJoJpl+CWhi1kEss0u8iwyShFArV+vw=";
+        });
+      });
+    };
+  };
+in
 mkPoetryEnv {
   projectDir = authentik-src;
-  python = python312;
+  inherit python;
   overrides = [
     defaultPoetryOverrides
   ] ++ authentikPoetryOverrides;
